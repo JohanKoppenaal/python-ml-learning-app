@@ -1,0 +1,5 @@
+# Core dependencies
+# (nog minimaal - groeit mee met elke fase)
+
+# Dev dependencies
+pytest>=7.0
