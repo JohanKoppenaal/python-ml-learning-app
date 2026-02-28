@@ -5,6 +5,21 @@ Een interactieve command-line applicatie die je stap voor stap
 door Python en Machine Learning heen leidt.
 """
 
+import sys
+from pathlib import Path
+
+# Add project root to path for imports
+PROJECT_ROOT = Path(__file__).parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
+
+from src.lessons import variables
+from cli.lesson_runner import run_lesson
+
+# Beschikbare lessen (wordt later dynamisch)
+AVAILABLE_LESSONS = [
+    {"module": variables, "info": variables.get_lesson_info()},
+]
+
 
 def show_banner():
     """Toon de welkomstbanner."""
@@ -36,10 +51,31 @@ def show_menu():
 
 
 def handle_lessons():
-    """Toon beschikbare lessen."""
-    print("\n📚 Lessen\n")
-    print("  Nog geen lessen beschikbaar.")
-    print("  Dit wordt de eerste uitbreiding!\n")
+    """Toon beschikbare lessen en laat gebruiker kiezen."""
+    print("\n📚 Beschikbare Lessen\n")
+
+    for i, lesson in enumerate(AVAILABLE_LESSONS, 1):
+        info = lesson["info"]
+        print(f"  {i}. {info['title']} - {info['description']}")
+
+    print(f"  0. Terug naar hoofdmenu")
+    print()
+
+    choice = input("Kies een les: ").strip()
+
+    if choice == "0":
+        return
+
+    try:
+        lesson_index = int(choice) - 1
+        if 0 <= lesson_index < len(AVAILABLE_LESSONS):
+            selected = AVAILABLE_LESSONS[lesson_index]
+            result = run_lesson(selected["module"])
+            # TODO: Save result to progress tracker
+        else:
+            print("\n⚠️  Ongeldige keuze.")
+    except ValueError:
+        print("\n⚠️  Voer een nummer in.")
 
 
 def handle_quiz():
